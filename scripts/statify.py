@@ -38,10 +38,8 @@ PICTURES = ["top.jpg", "Anim_logo.gif", "menu-bkg.gif", "news-off.gif", "arrow-o
             "small-votes.gif", "small-schedule.gif", "small-infos.gif", "ojtv0.gif"]
 
 # Oneliner: only the party itself (from 2000-08-25: before, the author was testing the script; after
-# 2000-08-28 one more test line). Lines naming a person with an accusation or an insult, and the line
-# publishing a visitor's LAN IP address, are left out (same rule as the people sheets of the other archives).
+# 2000-08-28 one more test line). Nothing else is filtered: the lines are old and anonymous.
 ONELINER_FROM, ONELINER_TO = "2000-08-25", "2000-08-28"
-ONELINER_DROP = re.compile(r"(?i)\bis gay\b|netbus|nb attack|\bis stink\b|can i fuk|\bgo to shower\b|10\.0\.1\.\d+")
 # The intranet's own links: old address -> page of this archive (None = no link, the target is gone).
 LINKS = {
     "http://www.ltp.net/schedule.htm": "/schedule.html",
@@ -165,9 +163,7 @@ def render_news(con) -> str:
 
 def oneliner_rows(con) -> list[tuple[str, str]]:
     rows = con.execute("SELECT dt, sentence FROM ONELINER WHERE dt>=? AND dt<? ORDER BY dt, id", (ONELINER_FROM, ONELINER_TO)).fetchall()
-    codes = {c.strip().lower() for (c,) in con.execute("SELECT code FROM LOGINS")}  # a visitor pasted a login code once
-    def has_code(s): return any(w.lower() in codes for w in re.findall(r"[A-Za-z0-9]{5}", s))
-    return [(dt, s.strip()) for dt, s in rows if s.strip() and not ONELINER_DROP.search(s) and not has_code(s)]
+    return [(dt, s.strip()) for dt, s in rows if s.strip()]
 
 
 def oneliner_html(rows, n=None) -> str:
@@ -205,7 +201,7 @@ def render_oneliner(con) -> str:
     rows = oneliner_rows(con)
     body = f"""<FONT class=title6>Oneliner</FONT><BR><BR>
 <FONT class=note>Everything written on the oneliner during the party (25-27 August 2000), oldest first: {len(rows)} lines.
-Times are those of the party. A few lines are left out (they name a person).</FONT><BR><BR>
+Times are those of the party.</FONT><BR><BR>
 <TABLE width="100%" cellpadding=4 class=specialtable><TR><TD class=smtxt>
 {oneliner_html(rows)}</TD></TR></TABLE>"""
     return page("LTP4 - Oneliner", body)

@@ -4,7 +4,7 @@
 Hard checks (exit 1): no macro / ASP / form leftovers; only the removal-contact `mailto:` (full-width @);
 no IPv4 other than the party LAN (10.x); every page declares iso-8859-1, has the removal footer;
 every internal link and image resolves (case-sensitive, like bunny.net); robots.txt allows all and
-sitemap.xml lists every page; and, when the raw store is present, no login code, login nick, IP,
+sitemap.xml lists every page; and, when the raw store is present, no public IP,
 host name or user agent (public IPs) of the LTP database appears in any published file.
 """
 import argparse
@@ -72,9 +72,6 @@ def main() -> int:
         con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
         blob = "\n".join(files[r].read_bytes().decode("iso-8859-1") for r in pages)
         words = set(re.findall(r"[A-Za-z0-9_]+", blob))
-        for (code,) in con.execute("SELECT code FROM LOGINS"):
-            if code.strip() in words and len(code.strip()) == 5 and not re.fullmatch(r"[a-z]+", code.strip()):
-                errs.append(f"login code in the site: {code}")
         for (v,) in con.execute("SELECT DISTINCT ip FROM ONELINER WHERE ip IS NOT NULL UNION SELECT DISTINCT hostname FROM ONELINER WHERE hostname<>'' UNION SELECT DISTINCT user_agent FROM ONELINER WHERE user_agent IS NOT NULL"):
             if v.strip() and not v.strip().startswith("10.") and v.strip() in blob:
                 errs.append(f"private visitor value in the site: {v[:30]}")

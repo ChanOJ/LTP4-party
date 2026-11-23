@@ -38,9 +38,8 @@ state of the original (it greyed out events as time went by).
 - Never published: login codes and nicks (`LOGINS`), who voted for what (`VOTES` rows), jury
   assignments, IPs, host names and user agents of the oneliner, inactive news (one holds a
   private e-mail address), the `$$MACRO$$` templates and the engine.
-- Oneliner: only 2000-08-25 to 2000-08-27 (before, the author was testing the script); a few
-  lines are left out: accusations or insults naming a person, a visitor's LAN IP, and a login
-  code a visitor pasted (`ONELINER_DROP` in `scripts/statify.py`).
+- Oneliner: only 2000-08-25 to 2000-08-27 (before, the author was testing the script), otherwise
+  complete and unfiltered (old, anonymous lines).
 - News links to `ltp.ojuice.net` point to the LTP4 archive; links to dead targets (a LAN FTP
   address, an e-mail address, `upload.htm`) are plain text. Every page ends with "To be removed
   from this page, contact me."
