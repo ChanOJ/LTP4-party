@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Verify site/ (stdlib only, read-only):  python3 scripts/verify_build.py [--build site]
 
-Hard checks (exit 1): no macro / ASP / form leftovers; only the removal-contact `mailto:` (full-width @);
+Hard checks (exit 1): no macro / ASP / form leftovers; only the removal-contact `mailto:` (real @, `&#64;`);
 no IPv4 other than the party LAN (10.x); every page declares iso-8859-1, has the removal footer;
 every internal link and image resolves (case-sensitive, like bunny.net); robots.txt allows all and
 sitemap.xml lists every page; and, when the raw store is present, no public IP,
@@ -17,8 +17,9 @@ from urllib.parse import unquote, urlsplit
 
 REPO = Path(__file__).resolve().parent.parent
 RAW = Path(os.environ.get("ID3X_RAW") or Path.home() / "Code" / "id3x" / "raw")
+NO_FOOTER = {"schedule.html", "infos.html"}
 FOOTER = "To be removed from this page, contact me."
-MAIL = "mailto:chandra_oj＠pm.me"
+MAIL = "mailto:chandra_oj&#64;pm.me"
 LINK = re.compile(r"""(?i)\b(?:href|src|background)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))""")
 BAD = [("macro", r"\$\$"), ("asp", r"<%|%>"), ("form", r"(?i)<form\b|<input\b|<textarea\b|<select\b"),
        ("script", r"(?i)<script\b"), ("credentials", r"(?i)logins?\b|listlogins|password"), ("ascii @", r"@")]
@@ -36,9 +37,15 @@ def main() -> int:
         t = files[rel].read_bytes().decode("iso-8859-1")
         if "charset=iso-8859-1" not in t:
             errs.append(f"{rel}: no iso-8859-1 charset")
-        if FOOTER not in t or MAIL.encode("ascii", "xmlcharrefreplace").decode() not in t:
+        # schedule and infos list no person (no nick, name or address): no removal footer there
+        if rel in NO_FOOTER:
+            if FOOTER in t or "mailto:" in t:
+                errs.append(f"{rel}: removal footer present on a page with no personal data")
+        elif FOOTER not in t or MAIL not in t:
             errs.append(f"{rel}: removal footer missing")
-        t2 = t.replace(MAIL.encode("ascii", "xmlcharrefreplace").decode(), "")
+        if "＠" in t or "&#65312;" in t:
+            errs.append(f"{rel}: fullwidth @ (U+FF20) in the footer")
+        t2 = t.replace(MAIL, "")
         for name, rx in BAD:
             if re.search(rx, t2):
                 errs.append(f"{rel}: {name} found")
@@ -53,7 +60,7 @@ def main() -> int:
             tgt = (path.lstrip("/") or "index.html") if path.startswith("/") else (Path(rel).parent / path).as_posix()
             if tgt not in files:
                 errs.append(f"{rel}: broken link {u}")
-        if "@" in t.replace("&#65312;", ""):
+        if "@" in t:
             errs.append(f"{rel}: e-mail-like text")
     for name in ("robots.txt", "sitemap.xml"):
         if name not in files:
