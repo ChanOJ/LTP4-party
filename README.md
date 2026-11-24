@@ -43,9 +43,9 @@ state of the original (it greyed out events as time went by).
   complete and unfiltered (old, anonymous lines).
 - News links to `ltp.ojuice.net` point to the LTP4 archive; links to dead targets (a LAN FTP
   address, an e-mail address, `upload.htm`) are plain text. The fast code link to `check.zip` on
-  `ojuice.net` (dead, no new address known) keeps its original address. Every page that lists people (index,
-  oneliner, results, fastcode) ends with "To be removed from this page, contact me."; schedule and
-  infos list no person and have no such footer.
+  `ojuice.net` (dead, no new address known) keeps its original address.
+- Pages that list people (index, oneliner, results, fastcode) end with "To be removed from this
+  page, contact me."; schedule and infos list no person and have no such footer.
 
 ## Layout
 
