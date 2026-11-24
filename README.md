@@ -36,13 +36,16 @@ state of the original (it greyed out events as time went by).
 - Forms: add news, add vote, upload / submit / delete a prod, login and logout, edit the schedule,
   the backoffice and `listlogins.txt`. The entry files (`/zi/<compo>/*.zip`) are not archived.
 - Never published: login codes and nicks (`LOGINS`), who voted for what (`VOTES` rows), jury
-  assignments, IPs, host names and user agents of the oneliner, inactive news (one holds a
-  private e-mail address), the `$$MACRO$$` templates and the engine.
+  assignments, visitors' IPs, host names and user agents of the oneliner, inactive news (one holds
+  a private e-mail address), the `$$MACRO$$` templates and the engine. The party's LAN addresses
+  (`10.0.x.x`) are published as written.
 - Oneliner: only 2000-08-25 to 2000-08-27 (before, the author was testing the script), otherwise
   complete and unfiltered (old, anonymous lines).
 - News links to `ltp.ojuice.net` point to the LTP4 archive; links to dead targets (a LAN FTP
-  address, an e-mail address, `upload.htm`) are plain text. Every page ends with "To be removed
-  from this page, contact me."
+  address, an e-mail address, `upload.htm`) are plain text. The fast code link to `check.zip` on
+  `ojuice.net` (dead, no new address known) keeps its original address. Every page that lists people (index,
+  oneliner, results, fastcode) ends with "To be removed from this page, contact me."; schedule and
+  infos list no person and have no such footer.
 
 ## Layout
 

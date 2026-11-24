@@ -30,7 +30,7 @@ SITE = REPO / "site"
 HOST = "ltp4-party.sauthier.family"
 LTP4_HOST = "ltp4.sauthier.family"  # the public LTP4 information site (ltp.ojuice.net)
 ENC = "iso-8859-1"
-MAIL = "chandra_oj＠pm.me"  # full-width @ on purpose (anti-scraping), as on the other archives
+MAIL = "chandra_oj&#64;pm.me"  # real @ as a character reference (U+0040); never U+FF20
 
 # Pictures referenced by the pages (lower-cased names: bunny.net is case-sensitive).
 PICTURES = ["top.jpg", "Anim_logo.gif", "menu-bkg.gif", "news-off.gif", "arrow-off.gif", "charts-off.gif",
@@ -94,9 +94,10 @@ SMALL = [("/", "small-news.gif", "news"), ("/results.html", "small-votes.gif", "
          ("/schedule.html", "small-schedule.gif", "schedule"), ("/infos.html", "small-infos.gif", "infos")]
 
 
-def page(title: str, body: str) -> str:
+def page(title: str, body: str, footer: bool = True) -> str:
     menu = "".join(f'\t\t\t<A href="{u}"><IMG src="/pictures/{i}" alt={a} border=0>'
                    f'<IMG src="/pictures/arrow-off.gif" border=0></A><BR><BR>\n' for u, i, a in MENU)
+    removal = f'<BR>\n<A href="mailto:{MAIL}">To be removed from this page, contact me.</A>' if footer else ""
     small = " | ".join(f'<A href="{u}"><IMG alt={a} border=0 src="/pictures/{i}"></A>' for u, i, a in SMALL)
     return f"""<HTML>
 <HEAD>
@@ -137,8 +138,7 @@ def page(title: str, body: str) -> str:
 		<TD width="655" valign="bottom"><FONT class=menubottom><BR><BR>[ {small} ]<BR>
 <A href="/oneliner.html">oneliner</A> | <A href="/fastcode.html">fast code</A> | <A href="https://{LTP4_HOST}/">LTP4 information site</A>
 <HR size="1" align="left">
-<FONT class=note>Archive of the intranet that ran on the LAN of the party. Nothing can be sent from this site.<BR>
-<A href="mailto:{MAIL}">To be removed from this page, contact me.</A></FONT>
+<FONT class=note>Archive of the intranet that ran on the LAN of the party. Nothing can be sent from this site.{removal}</FONT>
 </FONT></TD>
 	</TR>
 </TABLE>
@@ -225,7 +225,7 @@ def render_schedule(con) -> str:
 <TABLE border=0>
 {''.join(out)}</TABLE>
 </CENTER>"""
-    return page("LTP4 - Schedule", body)
+    return page("LTP4 - Schedule", body, footer=False)
 
 
 def render_results(con) -> str:
@@ -256,14 +256,13 @@ def render_infos() -> str:
                      ("http://ltp.ojuice.net/", f"https://{LTP4_HOST}/")]:
         src = src.replace(f'href="{old}"', f'href="{new}"')
     src = src.replace(">http://www.ltp.net/<", ">http://www.ltp.net/ (this site)<").replace(">http://www.ojuice.net/<", ">www.ojuice.net<").replace(">http://ltp.ojuice.net/<", ">ltp.ojuice.net<")
-    return page("LTP4 - Infos", src.strip())
+    return page("LTP4 - Infos", src.strip(), footer=False)
 
 
 def render_fastcode() -> str:
     src = (SKIN / "fastcode.htm").read_text(encoding="cp1252")
     src = src.replace("$$INCL:top.inc$$", "").replace("$$INCL:bottom.inc$$", "")
-    # the original check.c was downloaded from www.ojuice.net/archives: not archived
-    src = re.sub(r'<A href="http://www\.ojuice\.net/archives/check\.zip">(.*?)</a>', r"\1", src, flags=re.S | re.I)
+    # check.zip (www.ojuice.net/archives) is dead and no new address is known: the original href is kept
     return page("LTP4 - Fast Code", src.strip())
 
 
