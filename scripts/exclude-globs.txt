@@ -1,0 +1,20 @@
+# Files that must NOT be published (relative to site/ and hosting/; no '/' = basename anywhere; '*' crosses '/').
+# Read by scripts/check_excludes.py.
+
+# OS junk and backups
+.DS_Store
+Thumbs.db
+*.bak
+# server-side code and templates of the id3 skin
+*.asp
+*.htm
+*.inc
+# credentials, logins, vote data, databases, uploads (never part of the rendered pages)
+listlogins*
+*logins*
+backoffice/
+*.sqlite
+*.mdf
+*.ldf
+*.sql
+*.zip

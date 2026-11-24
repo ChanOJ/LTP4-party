@@ -1,0 +1,7 @@
+{
+  "repo": "LTP4-party",
+  "storage_zone": "ltp4-party",
+  "pullzone": "ltp4-party",
+  "hostname": "ltp4-party.sauthier.family",
+  "not_found_page": "/404.html"
+}
